@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Commenter</title>
+</head>
+<body>
+    <h1>Instagram Commenter</h1>
+    <form id="commentForm">
+        <label for="urls">Reel URLs (one per line):</label><br>
+        <textarea id="urls" name="urls" placeholder="Enter reel URLs, one per line" rows="10" cols="50"></textarea><br><br>
+        <label for="comment">Comment:</label><br>
+        <input type="text" id="comment" name="comment" placeholder="Enter your comment"><br><br>
+        <button type="submit">Post Comments</button>
+    </form>
+
+    <script>
+        document.getElementById('commentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const urls = document.getElementById('urls').value.split('\n').map(url => url.trim()).filter(url => url.length > 0);
+            const comment = document.getElementById('comment').value;
+
+            try {
+                const response = await fetch('/post-comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ urls, comment }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(result.message);
+                } else {
+                    alert('Failed to post comments. Please check the server.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while posting comments.');
+            }
+        });
+    </script>
+</body>
+</html>
